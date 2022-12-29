@@ -1,16 +1,22 @@
 // Global variables
-var userInputEl = $("#userInput");
-var searchBtnEl = $("#searchBtn");
+var searchFormEl = $("#search-form");
+var clearBtnEl = $("#clearBtn");
+var currentEl = $("#current");
 var APIKey = '6e326d6c8ab49b68ca54ae4a1a2c19d1';
 var cityEl = $("#city");
 var tempEl = $("#temp");
 var windEl = $("#wind");
 var humidityEl = $("#humidity");
 var iconEl = $("#icon");
+var forecastEl = $("#forecast-cards");
+var previousCitiesEl = $("#previous-cities");
 
 
+var count = 0;
+var search = [];
 function getCoordinates(event) {
     event.preventDefault();
+
     var city = userInputEl.val().trim();
     console.log(city);
     if(city) {
@@ -75,6 +81,40 @@ function getWeather(weather) {
     windEl.text("Wind: " + day[0].wind.speed + " MPH");
     humidityEl.text("Humidity: " + day[0].main.humidity + "%");
   }
-
+  function renderResults() {
+    //Create and append cards for everyday
+    if(displayCards===false) {
+      for(var i=0; i<5; i++) {
+        var cardEl = $("<div>");
+        cardEl.addClass("card m-3");
+        cardEl.attr("id", "day" + i).attr("style", "width: 12rem");
+        forecastEl.append(cardEl);
+        var cardBodyEl = $("<div>");
+        cardBodyEl.addClass("card-body");
+        cardEl.append(cardBodyEl);
+        var cardHeaderEl = $("<h4>");
+        cardHeaderEl.addClass("card-title");
+        cardHeaderEl.attr("id", "title" + i);
+        cardHeaderEl.text("Date");
+        cardBodyEl.append(cardHeaderEl);
+        var iconEl = $("<img>");
+        iconEl.attr("id", "icon" + i);
+        cardBodyEl.append(iconEl);
+        var tempEl = $("<p>");
+        tempEl.attr("id", "temp" + i);
+        tempEl.text("Temp: ");
+        cardBodyEl.append(tempEl);
+        var windEl = $("<p>");
+        windEl.attr("id", "wind" + i);
+        windEl.text("Wind: ");
+        cardBodyEl.append(windEl);
+        var humidEl = $("<p>");
+        humidEl.attr("id", "humid" + i);
+        humidEl.text("Humidity: ");
+        cardBodyEl.append(humidEl);
+      }
+    }
+    displayCards=true;
+  }
   
 searchBtnEl.on('click', getCoordinates);
