@@ -18,7 +18,6 @@
     border: 3px solid orange;
 }
 
-
 /* Media queries */
 @media only screen and (max-width: 992px) {
     #search-button{
