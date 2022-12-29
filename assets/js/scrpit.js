@@ -2,9 +2,11 @@
 var userInputEl = $("#userInput");
 var searchBtnEl = $("#searchBtn");
 var APIKey = '6e326d6c8ab49b68ca54ae4a1a2c19d1';
-
-
-
+var cityEl = $("#city");
+var tempEl = $("#temp");
+var windEl = $("#wind");
+var humidityEl = $("#humidity");
+var iconEl = $("#icon");
 
 
 function getCoordinates(event) {
@@ -24,9 +26,7 @@ function getCoordinates(event) {
                     response.json().then(function(data) {
                         
                         //function to display results
-                        console.log(data);
-                        console.log(data[0].lat);
-                        console.log(data[0].lon);
+                    
                         getCity(data);
                     });
                 } else {
@@ -52,14 +52,29 @@ function getCity(coordinates) {
                 if(response.ok) {
                     response.json().then(function(data) {
                         //function to display results
-                        console.log(data);
-                        console.log(data.list[0]);
-                        console.log(data.list[8]);
+                        getWeather(data);
                     });
                 } else {
                     alert("Error: " + response.statusText);
                 }
             })
 }
+function getWeather(weather) {
+    var day = [];
+  
+    for(var i=0; i<6; i++) {
+      day.push(weather.list[i*8]);
+    }
+  
+    var iconCode = day[0].weather[0].icon;
+    var iconURL = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
+    console.log(cityEl);
+    cityEl.text(weather.city.name + " (" + moment(day[0].dt_txt).format("L") + ")");
+    $("#icon").attr("src", iconURL).attr("width", 30).attr("height", 30);
+    tempEl.text("Temp: " + day[0].main.temp + " °F");
+    windEl.text("Wind: " + day[0].wind.speed + " MPH");
+    humidityEl.text("Humidity: " + day[0].main.humidity + "%");
+  }
 
+  
 searchBtnEl.on('click', getCoordinates);

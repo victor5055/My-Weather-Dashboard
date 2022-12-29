@@ -1,0 +1,36 @@
+
+:root {
+  --back: #154ba1;
+  --text: rgb(255, 255, 255);
+}
+
+/* Universal Selector */
+* {
+  margin:0;
+  padding:0;  
+  box-sizing: border-box;
+}
+
+#forecast {
+    padding-left: 20px;
+    background-color: #0275d8;
+    color: white;
+    border: 3px solid orange;
+}
+
+
+/* Media queries */
+@media only screen and (max-width: 992px) {
+    #search-button{
+        width:100%;
+    }
+    #search-city{
+        width:100%;
+    }
+}
+@media only screen and (max-width: 575px) {
+
+    #fiveDayForecastUl{
+        justify-content: center;
+    }
+}
