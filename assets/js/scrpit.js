@@ -32,7 +32,30 @@ function init() {
     }
 
 }init();
-
+//Function that gets the coordinates of the city searched by using the API 
+function searchAPICoordinates(city) {
+  var url = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + APIKey ;
+  
+		fetch(url)//calls Fetch API 
+		.then(function(response) {//method used to return a response object 
+			if(response.ok) {//checks if response is successful
+				response.json().then(function(data) {//return a body property in JSON format
+					if(data.length===0){
+            alert("No results found.");
+          } else {
+            var lat = data[0].lat;
+	          var lon = data[0].lon;
+            searchAPIWeather(lat, lon);
+          }
+				});
+			} else {
+					alert("Error: " + response.statusText);
+				}
+		})
+    //clears the input
+    var userInputEl = $("#user-input");
+		userInputEl.val("");
+}
 
 
 
