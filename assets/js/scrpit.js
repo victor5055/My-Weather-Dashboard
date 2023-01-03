@@ -157,7 +157,21 @@ function printCurrentWeather(day) {
         humidEl.text("Humidity: " + day.main.humidity + "%");
         cardBodyEl.append(humidEl);
       }
-      
+      //Function to manage the search list
+function searchList(day) {
+    if(search==null) {
+      search = [];
+    }
+    search.push(day.name);
+    localStorage.setItem("previousSearch", JSON.stringify(search));
+    var liEl = $("<div>");
+    liEl.addClass("list-group-item list-group-item-action");
+    liEl.attr("id", "city" + count);
+    count++;
+    localStorage.setItem("previousCount", JSON.stringify(count));
+    liEl.text(day.name);
+    previousCitiesEl.append(liEl);
+  }
     }
     displayCards=true;
   }
