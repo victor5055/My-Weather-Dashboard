@@ -14,6 +14,28 @@ var previousCitiesEl = $("#previous-cities");
 
 var count = 0;
 var search = [];
+//Function to initialize the page and get local storage
+function init() {
+    search = JSON.parse(localStorage.getItem("previousSearch"));//pulls previous searches from local storage
+    count = JSON.parse(localStorage.getItem("previousCount"));
+    if(count==null) {
+      count = 0;
+    }
+    if(search!=null) {
+      for(var i=0; i<search.length; i++) {
+        var liEl = $("<div>");
+        liEl.addClass("list-group-item list-group-item-action");
+        liEl.attr("id", "city" + i)
+        liEl.text(search[i]);
+        previousCitiesEl.append(liEl);
+      }
+    }
+
+}init();
+
+
+
+
 function getCoordinates(event) {
     event.preventDefault();
 
@@ -87,23 +109,20 @@ fetch(forecastRequestURL)//calls Fetch API
 				alert("Error: " + response.statusText);
 			}
 	})
-
-function getWeather(weather) {
-    var day = [];
-  
-    for(var i=0; i<6; i++) {
-      day.push(weather.list[i*8]);
-    }
-  
+//Function used to display current weather
+function printCurrentWeather(day) {
+    //Pulls weather icon code and URL to creat an image
     var iconCode = day[0].weather[0].icon;
-    var iconURL = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
-    console.log(cityEl);
-    cityEl.text(weather.city.name + " (" + moment(day[0].dt_txt).format("L") + ")");
-    $("#icon").attr("src", iconURL).attr("width", 30).attr("height", 30);
-    tempEl.text("Temp: " + day[0].main.temp + " °F");
-    windEl.text("Wind: " + day[0].wind.speed + " MPH");
-    humidityEl.text("Humidity: " + day[0].main.humidity + "%");
+     var iconURL = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
+
+    //Prints the current day results
+    cityEl.text(day.name + " (" + moment().format("L") + ")");
+    $("#icon").attr("src", iconURL).attr("width", 50).attr("height", 50);
+    tempEl.text("Temp: " + day.main.temp + " °F");
+    windEl.text("Wind: " + day.wind.speed + " MPH");
+    humidityEl.text("Humidity: " + day.main.humidity + "%");
   }
+  //Function to display 5 day forcast
   function renderResults() {
     //Create and append cards for everyday
     if(displayCards===false) {
