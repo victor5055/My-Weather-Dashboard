@@ -113,7 +113,7 @@ fetch(forecastRequestURL)//calls Fetch API
 //Function used to display current weather
 function printCurrentWeather(day) {
     //Pulls weather icon code and URL to creat an image
-    var iconCode = day[0].weather[0].icon;
+    var iconCode = day.weather[0].icon;
      var iconURL = "http://openweathermap.org/img/wn/" + iconCode + "@2x.png"
 
     //Prints the current day results
@@ -124,13 +124,11 @@ function printCurrentWeather(day) {
     humidityEl.text("Humidity: " + day.main.humidity + "%");
   }
   //Function to display 5 day forcast
-  function renderResults() {
+  function printForecast(day, i) {
     //Create and append cards for everyday
-    if(displayCards===false) {
-      for(var i=0; i<5; i++) {
-        var cardEl = $("<div>");
+         var cardEl = $("<div>");
         cardEl.addClass("card m-3");
-        cardEl.attr("id", "day" + i).attr("style", "width: 12rem");
+        cardEl.attr("id", "day" + i).attr("style", "width:12rem;background-color:#1d3253;color:#ffffff");
         forecastEl.append(cardEl);
         var cardBodyEl = $("<div>");
         cardBodyEl.addClass("card-body");
@@ -138,24 +136,28 @@ function printCurrentWeather(day) {
         var cardHeaderEl = $("<h4>");
         cardHeaderEl.addClass("card-title");
         cardHeaderEl.attr("id", "title" + i);
-        cardHeaderEl.text("Date");
+        cardHeaderEl.text(moment(day.dt_txt).format("L"));
         cardBodyEl.append(cardHeaderEl);
         var iconEl = $("<img>");
         iconEl.attr("id", "icon" + i);
+        var cardIconCode = day.weather[0].icon;
+        var cardIconURL = "http://openweathermap.org/img/wn/" + cardIconCode + "@2x.png";
+         iconEl.attr("src", cardIconURL).attr("width", 50).attr("height", 50);
         cardBodyEl.append(iconEl);
         var tempEl = $("<p>");
         tempEl.attr("id", "temp" + i);
-        tempEl.text("Temp: ");
+        tempEl.text("Temp: " + day.main.temp + " °F");
         cardBodyEl.append(tempEl);
         var windEl = $("<p>");
         windEl.attr("id", "wind" + i);
-        windEl.text("Wind: ");
+        windEl.text("Wind: " + day.wind.speed + " MPH");
         cardBodyEl.append(windEl);
         var humidEl = $("<p>");
         humidEl.attr("id", "humid" + i);
-        humidEl.text("Humidity: ");
+        humidEl.text("Humidity: " + day.main.humidity + "%");
         cardBodyEl.append(humidEl);
       }
+      
     }
     displayCards=true;
   }
