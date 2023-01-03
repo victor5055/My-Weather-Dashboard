@@ -56,61 +56,38 @@ function searchAPICoordinates(city) {
     var userInputEl = $("#user-input");
 		userInputEl.val("");
 }
+//Function to get the weather data by passing in city coordinates, uses the Current Weather Data and 5 Day / 3 Hour Forecast API 
 
-
-
-function getCoordinates(event) {
-    event.preventDefault();
-
-    var city = userInputEl.val().trim();
-    console.log(city);
-    if(city) {
-        var url = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + APIKey;
-        // Fetch API 
-        console.log(fetch(url));
-        fetch(url)
-        //then method used to return a response object promise
-            .then(function(response) {
-                console.log(response);
-                //checks if response is successful
-                if(response.ok) {
-                    response.json().then(function(data) {
-                        
-                        //function to display results
-                    
-                        getWeather(data);
+function searchAPIWeather(latitude, longtitude) {
+            var forecastRequestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longtitude + APIKey
+            var currentRequestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longtitude + APIKey
+            
+            fetch(currentRequestURL)//calls Fetch API and uses requestURL as parameter, returns a promise
+	        .then(function(response) {//then method used to return a response object (1st promise)
+                    if(response.ok) {//checks if response is successful
+                        response.json().then(function(data) {//promise to return in JSON format
+            if(data.length===0){
+              alert("No results found.");
+            } else if(search!=null) {
+              if(search.includes(data.name)) {
+                printCurrentWeather(data);
+              } else {
+                printCurrentWeather(data);
+                searchList(data);
+              }
+            } else {
+              //function to display the results
+              printCurrentWeather(data);
+              searchList(data);
+            }
+            
+            
                     });
-                } else {
+            } else {
                     alert("Error: " + response.statusText);
                 }
-            })
-
-        userInputEl.val("");
-    } else {
-            alert("Enter a city")//alerts user if no text entered
-    } 
-}
-
-function getWeather(coordinates) {
-    var latitude = coordinates[0].lat;
-    var longtitude = coordinates[0].lon;
-    var forecastRequestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longtitude + APIKey
-    var currentRequestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longtitude + APIKey
-
-    fetch(currentRequestURL)
-            .then(function(response) {
-                console.log(response);
-                if(response.ok) {
-                    response.json().then(function(data) {
-                        //function to display results
-                        console.log(data);
-                        displayCurrent(data);
-                    });
-                } else {
-                    alert("Error: " + response.statusText);
-                }
-            })
-}
+        })
+   
 
 fetch(forecastRequestURL)//calls Fetch API 
 	.then(function(response) {//method used to return a response 
@@ -132,6 +109,7 @@ fetch(forecastRequestURL)//calls Fetch API
 				alert("Error: " + response.statusText);
 			}
 	})
+}
 //Function used to display current weather
 function printCurrentWeather(day) {
     //Pulls weather icon code and URL to creat an image
