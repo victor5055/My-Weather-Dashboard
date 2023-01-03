@@ -1,5 +1,4 @@
 // Global variables
-var APIKey = '6e326d6c8ab49b68ca54ae4a1a2c19d1';
 var searchFormEl = $("#search-form");
 var clearBtnEl = $("#clearBtn");
 var currentEl = $("#current");
@@ -34,8 +33,8 @@ function init() {
 }init();
 //Function that gets the coordinates of the city searched by using the API 
 function searchAPICoordinates(city) {
-  var url = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + APIKey ;
-  
+  var url = "https://api.openweathermap.org/geo/1.0/direct?q=" + city + "&limit=1&appid=6e326d6c8ab49b68ca54ae4a1a2c19d1";
+
 		fetch(url)//calls Fetch API 
 		.then(function(response) {//method used to return a response object 
 			if(response.ok) {//checks if response is successful
@@ -58,9 +57,9 @@ function searchAPICoordinates(city) {
 }
 //Function to get the weather data by passing in city coordinates, uses the Current Weather Data and 5 Day / 3 Hour Forecast API 
 
-function searchAPIWeather(latitude, longtitude) {
-            var forecastRequestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longtitude + APIKey
-            var currentRequestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longtitude + APIKey
+function searchAPIWeather(lat, lon) {
+  var forecastRequestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=6e326d6c8ab49b68ca54ae4a1a2c19d1&units=imperial"
+  var currentRequestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&appid=6e326d6c8ab49b68ca54ae4a1a2c19d1&units=imperial"
             
             fetch(currentRequestURL)//calls Fetch API and uses requestURL as parameter, returns a promise
 	        .then(function(response) {//then method used to return a response object (1st promise)
@@ -128,7 +127,7 @@ function printCurrentWeather(day) {
     //Create and append cards for everyday
          var cardEl = $("<div>");
         cardEl.addClass("card m-3");
-        cardEl.attr("id", "day" + i).attr("style", "width:12rem;background-color:#1d3253;color:#ffffff");
+        cardEl.attr("id", "day" + i).attr("style", "width:12rem;background-color:blue;color:#ffffff");
         forecastEl.append(cardEl);
         var cardBodyEl = $("<div>");
         cardBodyEl.addClass("card-body");
@@ -172,8 +171,33 @@ function searchList(day) {
     liEl.text(day.name);
     previousCitiesEl.append(liEl);
   }
-    }
-    displayCards=true;
-  }
+  //Function handlesearch for the submit event listener
+function handleSearch(event) {
+    event.preventDefault();
   
-searchBtnEl.on('click', getCoordinates);
+    var userInputEl = $("#user-input").val();
+    
+    //checks if user has entered any text
+    if(!userInputEl) {
+      alert("Please enter a city")
+      return;
+    }
+    searchAPICoordinates(userInputEl);
+    }
+    //Function to handle the previous searches
+function previousSearch(event) {
+    event.preventDefault();
+    search = JSON.parse(localStorage.getItem("previousSearch"));
+  
+    for(var i=0; i<search.length; i++) {
+      if($(event.target).attr("id")=="city"+i) {
+        searchAPICoordinates($("#city"+i).text());
+      }
+    }
+  }
+
+  //Event listener for the search button
+searchFormEl.on("submit", handleSearch);
+//Event listener for the previous city searches
+previousCitiesEl.on("click", previousSearch);
+  
