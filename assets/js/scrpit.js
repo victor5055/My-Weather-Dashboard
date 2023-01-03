@@ -1,8 +1,8 @@
 // Global variables
+var APIKey = '6e326d6c8ab49b68ca54ae4a1a2c19d1';
 var searchFormEl = $("#search-form");
 var clearBtnEl = $("#clearBtn");
 var currentEl = $("#current");
-var APIKey = '6e326d6c8ab49b68ca54ae4a1a2c19d1';
 var cityEl = $("#city");
 var tempEl = $("#temp");
 var windEl = $("#wind");
@@ -33,7 +33,7 @@ function getCoordinates(event) {
                         
                         //function to display results
                     
-                        getCity(data);
+                        getWeather(data);
                     });
                 } else {
                     alert("Error: " + response.statusText);
@@ -46,25 +46,48 @@ function getCoordinates(event) {
     } 
 }
 
-function getCity(coordinates) {
+function getWeather(coordinates) {
     var latitude = coordinates[0].lat;
     var longtitude = coordinates[0].lon;
-    var requestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longtitude + APIKey
-    console.log(requestURL);
+    var forecastRequestURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon=" + longtitude + APIKey
+    var currentRequestURL = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longtitude + APIKey
 
-    fetch(requestURL)
+    fetch(currentRequestURL)
             .then(function(response) {
                 console.log(response);
                 if(response.ok) {
                     response.json().then(function(data) {
                         //function to display results
-                        getWeather(data);
+                        console.log(data);
+                        displayCurrent(data);
                     });
                 } else {
                     alert("Error: " + response.statusText);
                 }
             })
 }
+
+fetch(forecastRequestURL)//calls Fetch API 
+	.then(function(response) {//method used to return a response 
+		if(response.ok) {//checks if response is successful
+			response.json().then(function(data) {//promise to return data in JSON format
+        if(data.length===0){
+          alert("No results found.");
+        } else {
+          //function to display results
+          forecastEl.text("");//clears previous cards
+          for(var i=0; i<40; i++) {
+            if((data.list[i].dt_txt.indexOf("09:00:00") > -1) && moment(data.list[i].dt_txt).format("L")!==moment().format("L")) { //checks to output weather at noon for each day
+            printForecast(data.list[i], i);
+           }
+          }
+        }
+				});
+		} else {
+				alert("Error: " + response.statusText);
+			}
+	})
+
 function getWeather(weather) {
     var day = [];
   
